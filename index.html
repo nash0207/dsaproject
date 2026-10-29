@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PGPC CC 104 - DSA Interactive Web Suite</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #3b82f6;
+      --accent: #10b981;
+      --danger: #ef4444;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1e293b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { display: flex; height: 100vh; background-color: var(--bg); color: var(--text); overflow: hidden; }
+    
+    /* Sidebar */
+    sidebar {
+      width: 280px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    sidebar h2 { font-size: 1.1rem; text-align: center; margin-bottom: 5px; color: #93c5fd; }
+    sidebar h4 { font-size: 0.8rem; text-align: center; margin-bottom: 25px; opacity: 0.8; }
+    .nav-btn {
+      background: none;
+      border: none;
+      color: #e2e8f0;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      background-color: var(--secondary);
+      color: white;
+      font-weight: 600;
+      transform: translateX(4px);
+    }
+
+    /* Main Area */
+    main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .module-card {
+      background: var(--card);
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      border: 1px solid #e2e8f0;
+      display: none;
+    }
+    .module-card.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    h2.title { color: var(--primary); margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; }
+    
+    /* Control Form Inputs */
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    input[type="text"], input[type="number"] {
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      flex: 1;
+      min-width: 180px;
+    }
+    button.btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      background: var(--secondary);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    button.btn:hover { opacity: 0.9; }
+    button.btn-danger { background: var(--danger); }
+    button.btn-accent { background: var(--accent); }
+
+    /* Visual Containers */
+    .visual-box {
+      background: #f1f5f9;
+      padding: 25px;
+      border-radius: 8px;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      overflow-x: auto;
+      border: 2px dashed #cbd5e1;
+    }
+    .node {
+      background: white;
+      border: 2px solid var(--secondary);
+      color: var(--primary);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      animation: pop 0.2s ease-out;
+    }
+    @keyframes pop { from { transform: scale(0.6); } to { transform: scale(1); } }
+    .arrow { font-size: 1.4rem; color: #94a3b8; }
+
+    /* Sorting Bars */
+    .bars-container {
+      display: flex;
+      align-items: flex-end;
+      height: 200px;
+      gap: 8px;
+      background: #0f172a;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .bar {
+      background: #38bdf8;
+      width: 35px;
+      border-radius: 4px 4px 0 0;
+      text-align: center;
+      color: white;
+      font-size: 0.75rem;
+      padding-top: 5px;
+      transition: height 0.3s;
+    }
+
+    .output-log {
+      margin-top: 15px;
+      background: #1e293b;
+      color: #38ef7d;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+
+  <sidebar>
+    <h2>PADRE GARCIA POLYTECHNIC COLLEGE</h2>
+    <h4>CC 104 - DSA Interactive Suite</h4>
+    <button class="nav-btn active" onclick="switchTab('arrays')">1. Arrays</button>
+    <button class="nav-btn" onclick="switchTab('linkedlist')">2. Linked Lists</button>
+    <button class="nav-btn" onclick="switchTab('stacks')">3. Stacks (LIFO)</button>
+    <button class="nav-btn" onclick="switchTab('queues')">4. Queues (FIFO)</button>
+    <button class="nav-btn" onclick="switchTab('trees')">5. Trees & Traversals</button>
+    <button class="nav-btn" onclick="switchTab('graphs')">6. Graphs (BFS / DFS)</button>
+    <button class="nav-btn" onclick="switchTab('sorting')">7. Bubble Sort & Quicksort</button>
+  </sidebar>
+
+  <main>
+    <!-- 1. ARRAYS -->
+    <div id="arrays" class="module-card active">
+      <h2 class="title">Array Operations</h2>
+      <div class="controls">
+        <input type="text" id="arr-val" placeholder="Enter value">
+        <button class="btn" onclick="arrInsert()">Insert Element</button>
+        <button class="btn btn-danger" onclick="arrDelete()">Delete Value</button>
+        <button class="btn btn-accent" onclick="arrSearch()">Search Value</button>
+      </div>
+      <div class="visual-box" id="arr-view"></div>
+      <div class="output-log" id="arr-log">Array status: Initialized empty.</div>
+    </div>
+
+    <!-- 2. LINKED LIST -->
+    <div id="linkedlist" class="module-card">
+      <h2 class="title">Singly Linked List</h2>
+      <div class="controls">
+        <input type="text" id="ll-val" placeholder="Enter node value">
+        <button class="btn" onclick="llInsertHead()">Insert Head</button>
+        <button class="btn" onclick="llInsertTail()">Insert Tail</button>
+        <button class="btn btn-danger" onclick="llDelete()">Delete Value</button>
+      </div>
+      <div class="visual-box" id="ll-view"></div>
+      <div class="output-log" id="ll-log">Linked list status: Ready.</div>
+    </div>
+
+    <!-- 3. STACKS -->
+    <div id="stacks" class="module-card">
+      <h2 class="title">Stack (Last-In, First-Out)</h2>
+      <div class="controls">
+        <input type="text" id="stack-val" placeholder="Element to Push">
+        <button class="btn" onclick="stackPush()">Push</button>
+        <button class="btn btn-danger" onclick="stackPop()">Pop</button>
+        <button class="btn btn-accent" onclick="stackPeek()">Peek</button>
+      </div>
+      <div class="visual-box" id="stack-view"></div>
+      <div class="output-log" id="stack-log">Stack status: Empty.</div>
+    </div>
+
+    <!-- 4. QUEUES -->
+    <div id="queues" class="module-card">
+      <h2 class="title">Queue (First-In, First-Out)</h2>
+      <div class="controls">
+        <input type="text" id="queue-val" placeholder="Element to Enqueue">
+        <button class="btn" onclick="qEnqueue()">Enqueue</button>
+        <button class="btn btn-danger" onclick="qDequeue()">Dequeue</button>
+        <button class="btn btn-accent" onclick="qPeek()">Front / Peek</button>
+      </div>
+      <div class="visual-box" id="queue-view"></div>
+      <div class="output-log" id="queue-log">Queue status: Empty.</div>
+    </div>
+
+    <!-- 5. TREES -->
+    <div id="trees" class="module-card">
+      <h2 class="title">Binary Search Tree & Traversals</h2>
+      <div class="controls">
+        <input type="number" id="tree-val" placeholder="Integer value (e.g. 50)">
+        <button class="btn" onclick="treeInsert()">Insert Key</button>
+        <button class="btn btn-accent" onclick="runTraversals()">Execute Traversals</button>
+        <button class="btn btn-danger" onclick="treeReset()">Reset Tree</button>
+      </div>
+      <div class="output-log" id="tree-log">BST initialized. Insert values to generate Traversals.</div>
+    </div>
+
+    <!-- 6. GRAPHS -->
+    <div id="graphs" class="module-card">
+      <h2 class="title">Graph Operations (Adjacency List)</h2>
+      <div class="controls">
+        <input type="text" id="edge-u" placeholder="Vertex U (e.g. A)" style="max-width: 140px;">
+        <input type="text" id="edge-v" placeholder="Vertex V (e.g. B)" style="max-width: 140px;">
+        <button class="btn" onclick="graphAddEdge()">Add Edge</button>
+        <input type="text" id="graph-start" placeholder="Start Node" style="max-width: 140px;">
+        <button class="btn btn-accent" onclick="graphBFS()">Run BFS</button>
+        <button class="btn btn-accent" onclick="graphDFS()">Run DFS</button>
+      </div>
+      <div class="output-log" id="graph-log">Graph initialized empty.</div>
+    </div>
+
+    <!-- 7. SORTING -->
+    <div id="sorting" class="module-card">
+      <h2 class="title">Bubble Sort vs Quicksort Visualizer</h2>
+      <div class="controls">
+        <input type="text" id="sort-arr" value="64 34 25 12 22 11 90" placeholder="Space separated numbers">
+        <button class="btn" onclick="runBubbleSort()">Run Bubble Sort</button>
+        <button class="btn btn-accent" onclick="runQuicksort()">Run Quicksort</button>
+      </div>
+      <div class="bars-container" id="bars-view"></div>
+      <div class="output-log" id="sort-log">Enter space-separated numbers and choose a sorting algorithm.</div>
+    </div>
+  </main>
+
+  <script>
+    // Tab Switching
+    function switchTab(id) {
+      document.querySelectorAll('.module-card').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // --- 1. ARRAY MODULE ---
+    let arrayData = [];
+    function renderArray() {
+      const el = document.getElementById('arr-view');
+      el.innerHTML = arrayData.length === 0 ? '<span style="color:#94a3b8;">(Array is empty)</span>' : '';
+      arrayData.forEach((v, i) => {
+        el.innerHTML += `<div class="node">[${i}] : ${v}</div>`;
+      });
+    }
+    function arrInsert() {
+      const val = document.getElementById('arr-val').value.trim();
+      if(!val) return;
+      arrayData.push(val);
+      renderArray();
+      document.getElementById('arr-log').innerText = `Inserted "${val}". Current Size: ${arrayData.length}`;
+      document.getElementById('arr-val').value = '';
+    }
+    function arrDelete() {
+      const val = document.getElementById('arr-val').value.trim();
+      const idx = arrayData.indexOf(val);
+      if(idx !== -1) {
+        arrayData.splice(idx, 1);
+        renderArray();
+        document.getElementById('arr-log').innerText = `Deleted "${val}".`;
+      } else {
+        document.getElementById('arr-log').innerText = `Error: Value "${val}" not found in array.`;
+      }
+    }
+    function arrSearch() {
+      const val = document.getElementById('arr-val').value.trim();
+      const idx = arrayData.indexOf(val);
+      document.getElementById('arr-log').innerText = idx !== -1 
+        ? `Found "${val}" at index ${idx}.` 
+        : `Value "${val}" does not exist in array.`;
+    }
+
+    // --- 2. LINKED LIST MODULE ---
+    let llData = [];
+    function renderLL() {
+      const el = document.getElementById('ll-view');
+      el.innerHTML = llData.length === 0 ? '<span style="color:#94a3b8;">[HEAD] -> null</span>' : '';
+      llData.forEach((v, i) => {
+        el.innerHTML += `<div class="node">${v}</div><span class="arrow">&rarr;</span>`;
+      });
+      if(llData.length > 0) el.innerHTML += `<span style="font-weight:bold; color:#94a3b8;">NULL</span>`;
+    }
+    function llInsertHead() {
+      const v = document.getElementById('ll-val').value.trim();
+      if(!v) return;
+      llData.unshift(v);
+      renderLL();
+      document.getElementById('ll-log').innerText = `Inserted "${v}" at head.`;
+      document.getElementById('ll-val').value = '';
+    }
+    function llInsertTail() {
+      const v = document.getElementById('ll-val').value.trim();
+      if(!v) return;
+      llData.push(v);
+      renderLL();
+      document.getElementById('ll-log').innerText = `Inserted "${v}" at tail.`;
+      document.getElementById('ll-val').value = '';
+    }
+    function llDelete() {
+      const v = document.getElementById('ll-val').value.trim();
+      const idx = llData.indexOf(v);
+      if(idx !== -1) {
+        llData.splice(idx, 1);
+        renderLL();
+        document.getElementById('ll-log').innerText = `Deleted "${v}" from linked list.`;
+      } else {
+        document.getElementById('ll-log').innerText = `Error: Node "${v}" not found.`;
+      }
+    }
+
+    // --- 3. STACK (LIFO) ---
+    let stackData = [];
+    function renderStack() {
+      const el = document.getElementById('stack-view');
+      el.innerHTML = stackData.length === 0 ? '<span style="color:#94a3b8;">(Stack is empty - Underflow protected)</span>' : '';
+      for (let i = stackData.length - 1; i >= 0; i--) {
+        el.innerHTML += `<div class="node">${stackData[i]} ${i === stackData.length - 1 ? '<b style="color:var(--danger);">(TOP)</b>' : ''}</div>`;
+      }
+    }
+    function stackPush() {
+      const v = document.getElementById('stack-val').value.trim();
+      if(!v) return;
+      stackData.push(v);
+      renderStack();
+      document.getElementById('stack-log').innerText = `Pushed "${v}" onto stack.`;
+      document.getElementById('stack-val').value = '';
+    }
+    function stackPop() {
+      if(stackData.length === 0) {
+        document.getElementById('stack-log').innerText = "Underflow Error: Cannot pop from an empty stack.";
+        return;
+      }
+      const popped = stackData.pop();
+      renderStack();
+      document.getElementById('stack-log').innerText = `Popped "${popped}" from stack.`;
+    }
+    function stackPeek() {
+      if(stackData.length === 0) {
+        document.getElementById('stack-log').innerText = "Stack is currently empty.";
+      } else {
+        document.getElementById('stack-log').innerText = `Top Element: "${stackData[stackData.length - 1]}"`;
+      }
+    }
+
+    // --- 4. QUEUE (FIFO) ---
+    let queueData = [];
+    function renderQueue() {
+      const el = document.getElementById('queue-view');
+      el.innerHTML = queueData.length === 0 ? '<span style="color:#94a3b8;">(Queue is empty - Underflow protected)</span>' : '';
+      queueData.forEach((v, i) => {
+        let label = '';
+        if(i === 0) label = '<b style="color:var(--accent);">(FRONT)</b>';
+        if(i === queueData.length - 1) label += '<b style="color:var(--secondary);">(REAR)</b>';
+        el.innerHTML += `<div class="node">${v} ${label}</div>`;
+      });
+    }
+    function qEnqueue() {
+      const v = document.getElementById('queue-val').value.trim();
+      if(!v) return;
+      queueData.push(v);
+      renderQueue();
+      document.getElementById('queue-log').innerText = `Enqueued "${v}".`;
+      document.getElementById('queue-val').value = '';
+    }
+    function qDequeue() {
+      if(queueData.length === 0) {
+        document.getElementById('queue-log').innerText = "Underflow Error: Cannot dequeue from an empty queue.";
+        return;
+      }
+      const rem = queueData.shift();
+      renderQueue();
+      document.getElementById('queue-log').innerText = `Dequeued "${rem}" from front.`;
+    }
+    function qPeek() {
+      if(queueData.length === 0) {
+        document.getElementById('queue-log').innerText = "Queue is currently empty.";
+      } else {
+        document.getElementById('queue-log').innerText = `Front Element: "${queueData[0]}"`;
+      }
+    }
+
+    // --- 5. BINARY SEARCH TREE & TRAVERSALS ---
+    class TNode {
+      constructor(val) { this.val = val; this.left = null; this.right = null; }
+    }
+    let bstRoot = null;
+    function insertBST(node, val) {
+      if(!node) return new TNode(val);
+      if(val < node.val) node.left = insertBST(node.left, val);
+      else if(val > node.val) node.right = insertBST(node.right, val);
+      return node;
+    }
+    function treeInsert() {
+      const val = parseInt(document.getElementById('tree-val').value);
+      if(isNaN(val)) return;
+      bstRoot = insertBST(bstRoot, val);
+      document.getElementById('tree-log').innerText = `Inserted key: ${val} into BST.`;
+      document.getElementById('tree-val').value = '';
+      runTraversals();
+    }
+    function treeReset() {
+      bstRoot = null;
+      document.getElementById('tree-log').innerText = "Tree reset to empty.";
+    }
+    function runTraversals() {
+      if(!bstRoot) {
+        document.getElementById('tree-log').innerText = "Tree is empty.";
+        return;
+      }
+      let pre = [], ino = [], post = [];
+      function preOrder(n) { if(n) { pre.push(n.val); preOrder(n.left); preOrder(n.right); } }
+      function inOrder(n) { if(n) { inOrder(n.left); ino.push(n.val); inOrder(n.right); } }
+      function postOrder(n) { if(n) { postOrder(n.left); postOrder(n.right); post.push(n.val); } }
+      preOrder(bstRoot); inOrder(bstRoot); postOrder(bstRoot);
+      document.getElementById('tree-log').innerText = 
+        `Preorder  (Root, Left, Right) : ${pre.join(' -> ')}\n` +
+        `Inorder   (Left, Root, Right) : ${ino.join(' -> ')}  (Sorted Order)\n` +
+        `Postorder (Left, Right, Root) : ${post.join(' -> ')}`;
+    }
+
+    // --- 6. GRAPHS (ADJACENCY LIST, BFS, DFS) ---
+    let graphAdj = {};
+    function graphAddEdge() {
+      const u = document.getElementById('edge-u').value.trim().toUpperCase();
+      const v = document.getElementById('edge-v').value.trim().toUpperCase();
+      if(!u || !v) return;
+      if(!graphAdj[u]) graphAdj[u] = [];
+      if(!graphAdj[v]) graphAdj[v] = [];
+      if(!graphAdj[u].includes(v)) graphAdj[u].push(v);
+      if(!graphAdj[v].includes(u)) graphAdj[v].push(u);
+      document.getElementById('edge-u').value = '';
+      document.getElementById('edge-v').value = '';
+      renderGraphLog(`Added undirected edge between ${u} and ${v}.`);
+    }
+    function renderGraphLog(msg) {
+      let adjText = "Adjacency List:\n";
+      for(let k in graphAdj) {
+        adjText += `  ${k} -> [${graphAdj[k].join(', ')}]\n`;
+      }
+      document.getElementById('graph-log').innerText = `${msg}\n\n${adjText}`;
+    }
+    function graphBFS() {
+      const start = document.getElementById('graph-start').value.trim().toUpperCase();
+      if(!graphAdj[start]) { alert("Start vertex not found in graph!"); return; }
+      let visited = new Set([start]);
+      let queue = [start];
+      let order = [];
+      while(queue.length > 0) {
+        let curr = queue.shift();
+        order.push(curr);
+        (graphAdj[curr] || []).sort().forEach(nbr => {
+          if(!visited.has(nbr)) { visited.add(nbr); queue.push(nbr); }
+        });
+      }
+      renderGraphLog(`BFS Traversal Order: ${order.join(' -> ')}`);
+    }
+    function graphDFS() {
+      const start = document.getElementById('graph-start').value.trim().toUpperCase();
+      if(!graphAdj[start]) { alert("Start vertex not found in graph!"); return; }
+      let visited = new Set();
+      let order = [];
+      function dfs(curr) {
+        visited.add(curr);
+        order.push(curr);
+        (graphAdj[curr] || []).sort().forEach(nbr => {
+          if(!visited.has(nbr)) dfs(nbr);
+        });
+      }
+      dfs(start);
+      renderGraphLog(`DFS Traversal Order: ${order.join(' -> ')}`);
+    }
+
+    // --- 7. SORTING ALGORITHMS ---
+    function renderBars(arr) {
+      const container = document.getElementById('bars-view');
+      container.innerHTML = '';
+      const maxVal = Math.max(...arr, 1);
+      arr.forEach(val => {
+        const height = (val / maxVal) * 160 + 20;
+        container.innerHTML += `<div class="bar" style="height:${height}px">${val}</div>`;
+      });
+    }
+    function getNumbers() {
+      const raw = document.getElementById('sort-arr').value.trim();
+      return raw.split(/\s+/).map(Number).filter(n => !isNaN(n));
+    }
+    function runBubbleSort() {
+      let arr = getNumbers();
+      renderBars(arr);
+      let steps = [];
+      let comp = 0, swaps = 0;
+      let a = [...arr];
+      for(let i = 0; i < a.length; i++) {
+        let swapped = false;
+        for(let j = 0; j < a.length - i - 1; j++) {
+          comp++;
+          if(a[j] > a[j+1]) {
+            let tmp = a[j]; a[j] = a[j+1]; a[j+1] = tmp;
+            swaps++;
+            swapped = true;
+          }
+        }
+        steps.push(`Pass ${i+1}: [${a.join(', ')}]`);
+        if(!swapped) break;
+      }
+      renderBars(a);
+      document.getElementById('sort-log').innerText = 
+        `BUBBLE SORT COMPLETED:\nSorted Result: [${a.join(', ')}]\nTotal Comparisons: ${comp} | Total Swaps: ${swaps}\n\nTrace:\n` + steps.join('\n');
+    }
+    function runQuicksort() {
+      let arr = getNumbers();
+      renderBars(arr);
+      let a = [...arr];
+      let steps = [];
+      let comp = 0, swaps = 0;
+
+      function partition(low, high) {
+        let pivot = a[high];
+        let i = low - 1;
+        for(let j = low; j < high; j++) {
+          comp++;
+          if(a[j] <= pivot) {
+            i++;
+            [a[i], a[j]] = [a[j], a[i]];
+            swaps++;
+          }
+        }
+        [a[i + 1], a[high]] = [a[high], a[i + 1]];
+        swaps++;
+        return i + 1;
+      }
+      function qs(low, high) {
+        if(low < high) {
+          let pi = partition(low, high);
+          steps.push(`Partition pivot ${a[pi]} placed: [${a.join(', ')}]`);
+          qs(low, pi - 1);
+          qs(pi + 1, high);
+        }
+      }
+      qs(0, a.length - 1);
+      renderBars(a);
+      document.getElementById('sort-log').innerText = 
+        `QUICKSORT COMPLETED:\nSorted Result: [${a.join(', ')}]\nTotal Comparisons: ${comp} | Total Swaps: ${swaps}\n\nTrace:\n` + steps.join('\n');
+    }
+
+    // Init display
+    renderArray();
+    renderBars([64, 34, 25, 12, 22, 11, 90]);
+  </script>
+</body>
+</html>
